@@ -22,7 +22,7 @@ export default function Hero() {
         playsInline
         preload="auto"
       >
-        <source src="/Palm 25 Brand No-1440P.mp4" type="video/mp4" />
+        <source src="/Palm 25 Brand No-14400P.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
