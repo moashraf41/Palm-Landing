@@ -191,7 +191,7 @@ export default function Events() {
   const [section8Ref, section8Controls] = useAnimateOnView();
 
   return (
-    <section className="w-full relative my-15 overflow-x-hidden mx-auto">
+    <section className="w-full relative my-15 overflow-x-hidden overflow-y-hidden mx-auto">
       <div className="md:px-4">
         {/* Header */}
         <motion.div
