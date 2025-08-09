@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
+import { motion, useInView, useAnimation } from "framer-motion";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -54,6 +56,52 @@ export default function Rooms() {
   const nextRef = useRef(null);
   const [swiperInstance, setSwiperInstance] = useState(null);
 
+  // refs and animation controls for sections
+  const headerRef = useRef(null);
+  const sliderRef = useRef(null);
+
+  const headerInView = useInView(headerRef, { once: true, margin: "-100px" });
+  const sliderInView = useInView(sliderRef, { once: true, margin: "-100px" });
+
+  const headerControls = useAnimation();
+  const sliderControls = useAnimation();
+
+  useEffect(() => {
+    if (headerInView) {
+      headerControls.start("visible");
+    }
+  }, [headerInView, headerControls]);
+
+  useEffect(() => {
+    if (sliderInView) {
+      sliderControls.start("visible");
+    }
+  }, [sliderInView, sliderControls]);
+
+  // animation variants
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
+  };
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
   useEffect(() => {
     if (swiperInstance) {
       swiperInstance.params.navigation.prevEl = prevRef.current;
@@ -66,7 +114,13 @@ export default function Rooms() {
   return (
     <section className="w-full bg-black relative">
       {/* Header */}
-      <div className="bg-black text-white flex flex-col md:flex-row  justify-between md:items-center px-4 sm:px-8 md:px-12 lg:px-33 py-6 md:py-12">
+      <motion.div
+        ref={headerRef}
+        initial="hidden"
+        animate={headerControls}
+        variants={fadeUp}
+        className="bg-black text-white flex flex-col md:flex-row justify-between md:items-center px-4 sm:px-8 md:px-12 lg:px-16 py-6 md:py-12"
+      >
         <div className="flex items-center gap-2 sm:gap-4 md:gap-6 ">
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold">
             ROOMS
@@ -90,10 +144,16 @@ export default function Rooms() {
             />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Small & Medium screens (less than md) */}
-      <div className="md:hidden px-4 py-6">
+      <motion.div
+        ref={sliderRef}
+        initial="hidden"
+        animate={sliderControls}
+        variants={containerVariants}
+        className="md:hidden px-4 py-6"
+      >
         <Swiper
           modules={[Navigation]}
           loop={true}
@@ -114,37 +174,39 @@ export default function Rooms() {
         >
           {images.map((img, i) => (
             <SwiperSlide key={i}>
-              <div
-                className="w-full h-[550px] bg-center bg-cover relative overflow-hidden "
-                style={{ backgroundImage: `url(${img.src})` }}
-              >
-                <div className="absolute inset-0 bg-black/20"></div>
-                <div className="absolute top-4 left-4 right-4 uppercase font-bold">
-                  <h2 className="text-white text-lg">{img.title}</h2>
-                  {img.subtitle && (
-                    <p className="text-white text-lg">{img.subtitle}</p>
-                  )}
+              <motion.div variants={cardVariants}>
+                <div
+                  className="w-full h-[550px] bg-center bg-cover relative overflow-hidden "
+                  style={{ backgroundImage: `url(${img.src})` }}
+                >
+                  <div className="absolute inset-0 bg-black/20"></div>
+                  <div className="absolute top-4 left-4 right-4 uppercase font-bold">
+                    <h2 className="text-white text-lg">{img.title}</h2>
+                    {img.subtitle && (
+                      <p className="text-white text-lg">{img.subtitle}</p>
+                    )}
+                  </div>
+                  <div className="absolute bottom-4 left-4">
+                    <button className="bg-black text-white px-6 py-2 flex items-center gap-2 font-bold uppercase text-sm hover:bg-white hover:text-black transition">
+                      Explore
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <div className="absolute bottom-4 left-4">
-                  <button className="bg-black text-white px-6 py-2 flex items-center gap-2 font-bold uppercase text-sm hover:bg-white hover:text-black transition">
-                    Explore
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+              </motion.div>
             </SwiperSlide>
           ))}
 
@@ -195,7 +257,7 @@ export default function Rooms() {
             </button>
           </div>
         </Swiper>
-      </div>
+      </motion.div>
 
       {/* Large screens (md and up) */}
       <div className="hidden md:block">

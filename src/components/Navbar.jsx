@@ -3,119 +3,134 @@ import { motion } from "framer-motion";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
 
-  // Prevent scrolling when menu is open
+  // منع التمرير لما المينيو مفتوح
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-
-    // Cleanup function to restore scrolling when component unmounts
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
+  // إظهار النافبار فقط لما نكون في أول الصفحة
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY === 0) {
+        setShowNavbar(true); // في أول الصفحة: تظهر النافبار
+      } else {
+        setShowNavbar(false); // لما ننزل: تختفي النافبار تماماً
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // تفحص أول مرة
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
-      <nav
-        className={`bg-white dark:bg-gray-900 w-full z-70 top-0 start-0 ${
-          isOpen ? "fixed" : ""
-        }`}
-      >
-        <div className="max-w-screen flex flex-wrap items-center justify-between px-6 md:px-10 lg:px-20 py-5 mx-auto">
-          {/* Logo and Bars */}
-          <div className="flex items-center space-x-3 rtl:space-x-reverse">
-            <motion.div
-              onClick={() => setIsOpen(!isOpen)}
-              className={`relative w-6 h-4 cursor-pointer`}
-              animate={isOpen ? "open" : "closed"}
-              initial={false}
-            >
-              <motion.span
-                className={`absolute top-1/2 left-0 w-full h-[2px] bg-black dark:bg-white`}
-                variants={{
-                  closed: {
-                    y: -6,
-                    rotate: 0,
-                  },
-                  open: {
-                    y: 0,
-                    rotate: 45,
-                  },
-                }}
-                transition={{ duration: 0.3 }}
+      {showNavbar && (
+        <nav
+          className={`bg-white dark:bg-gray-900 w-full z-70 top-0 start-0 fixed shadow-sm dark:shadow-2xl dark:shadow-gray-500/50`}
+        >
+          <div className="max-w-screen flex flex-wrap items-center justify-between px-6 md:px-10 lg:px-20 py-5 mx-auto">
+            {/* Logo and Bars */}
+            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+              <motion.div
+                onClick={() => setIsOpen(!isOpen)}
+                className={`relative w-6 h-4 cursor-pointer`}
+                animate={isOpen ? "open" : "closed"}
+                initial={false}
+              >
+                <motion.span
+                  className={`absolute top-1/2 left-0 w-full h-[2px] bg-black dark:bg-white`}
+                  variants={{
+                    closed: {
+                      y: -6,
+                      rotate: 0,
+                    },
+                    open: {
+                      y: 0,
+                      rotate: 45,
+                    },
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+                <motion.span
+                  className={`absolute top-1/2 left-0 w-full h-[2px] bg-black dark:bg-white`}
+                  variants={{
+                    closed: {
+                      y: 6,
+                      rotate: 0,
+                    },
+                    open: {
+                      y: 0,
+                      rotate: -45,
+                    },
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.div>
+              <img
+                src="/imgi_1_FPJ-new.svg"
+                className="h-[12px] md:h-[15px]"
+                alt="Logo"
               />
-              <motion.span
-                className={`absolute top-1/2 left-0 w-full h-[2px] bg-black dark:bg-white`}
-                variants={{
-                  closed: {
-                    y: 6,
-                    rotate: 0,
-                  },
-                  open: {
-                    y: 0,
-                    rotate: -45,
-                  },
-                }}
-                transition={{ duration: 0.3 }}
+            </div>
+
+            {/* Icons */}
+            <div className="flex md:order-2 sm:space-x-0 md:space-x-5 rtl:space-x-reverse items-center">
+              <img
+                src="/imgi_208_default.svg"
+                className="h-4 w-4 transition-all hover:-translate-y-1 cursor-pointer"
+                alt="Icon 1"
               />
-            </motion.div>
-            <img
-              src="/imgi_1_FPJ-new.svg"
-              className="h-[12px] md:h-[15px]"
-              alt="Logo"
-            />
-          </div>
+              <img
+                src="/imgi_209_default.svg"
+                className="h-4 w-4 hidden md:block transition-all hover:-translate-y-1 cursor-pointer"
+                alt="Icon 2"
+              />
+              <img
+                src="/imgi_210_default.svg"
+                className="h-4 w-4 hidden md:block animate-rotate-left cursor-pointer"
+                alt="Icon 3"
+              />
+            </div>
 
-          {/* Icons */}
-          <div className="flex md:order-2 sm:space-x-0 md:space-x-5 rtl:space-x-reverse items-center">
-            <img
-              src="/imgi_208_default.svg"
-              className="h-4 w-4 transition-all hover:-translate-y-1 cursor-pointer"
-              alt="Icon 1"
-            />
-            <img
-              src="/imgi_209_default.svg"
-              className="h-4 w-4 hidden md:block transition-all hover:-translate-y-1 cursor-pointer"
-              alt="Icon 2"
-            />
-            <img
-              src="/imgi_210_default.svg"
-              className="h-4 w-4 hidden md:block animate-rotate-left cursor-pointer"
-              alt="Icon 3"
-            />
-          </div>
-
-          {/* Nav Links */}
-          <div
-            className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
-            id="navbar-sticky"
-          >
-            <ul
-              className={`me-5 flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-7 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 ${
-                isOpen ? "hidden" : "hidden lg:flex"
-              }`}
+            {/* Nav Links */}
+            <div
+              className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+              id="navbar-sticky"
             >
-              {["Rooms", "Dine", "Events", "Relax", "Music", "Shop"].map(
-                (item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="nav-link font-bold text-sm uppercase relative group"
-                    >
-                      {item}
-                      <span className="absolute left-0 -bottom-1 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                    </a>
-                  </li>
-                )
-              )}
-            </ul>
+              <ul
+                className={`me-5 flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-7 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 ${
+                  isOpen ? "hidden" : "hidden lg:flex"
+                }`}
+              >
+                {["Rooms", "Dine", "Events", "Relax", "Music", "Shop"].map(
+                  (item) => (
+                    <li key={item}>
+                      <a
+                        href="#"
+                        className="nav-link font-bold text-sm uppercase relative group"
+                      >
+                        {item}
+                        <span className="absolute left-0 -bottom-1 w-full h-0.5 bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                      </a>
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      )}
 
       {/* Full Screen Menu with Framer Motion */}
       <motion.div
@@ -165,20 +180,10 @@ export default function Navbar() {
                       className="relative group inline-flex items-center text-2xl sm:text-3xl uppercase font-semibold text-black"
                       onClick={() => setIsOpen(false)}
                     >
-                      {/* النص */}
-                      <span
-                        className="relative z-10 transition-all duration-500 ease-in-out 
-    group-hover:text-gray-400"
-                      >
+                      <span className="relative z-10 transition-all duration-500 ease-in-out group-hover:text-gray-400">
                         {item}
                       </span>
-
-                      {/* السهم */}
-                      <span
-                        className="absolute right-0 translate-x-[-50%] opacity-0 
-  group-hover:translate-x-[100%] group-hover:opacity-100 
-  transition-all duration-500 ease-in-out ml-3"
-                      >
+                      <span className="absolute right-0 translate-x-[-50%] opacity-0 group-hover:translate-x-[100%] group-hover:opacity-100 transition-all duration-500 ease-in-out ml-3">
                         <img
                           src="/imgi_142_button-play-icon.svg"
                           alt="Arrow"

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
-export default function Hero() {
+export default function Hero({ locoScroll }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -10,6 +11,35 @@ export default function Hero() {
       });
     }
   }, []);
+
+  const handleExploreClick = () => {
+    if (!locoScroll) {
+      console.log("locoScroll not ready");
+      return;
+    }
+
+    const target = document.querySelector("#offers");
+    if (!target) {
+      console.log("#offers element not found");
+      return;
+    }
+
+    locoScroll.scrollTo(target, {
+      offset: 0,
+      duration: 1.5,
+      easing: [0.25, 0.0, 0.35, 1.0],
+    });
+  };
+
+  // Variants for motion
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 0.8,
+      y: 0,
+      transition: { duration: 1, ease: "easeOut" },
+    },
+  };
 
   return (
     <div className="h-screen w-full relative overflow-hidden">
@@ -27,33 +57,38 @@ export default function Hero() {
       </video>
 
       {/* Text & Arrow */}
-      <div className="absolute bottom-45 xl:bottom-20 left-1/2 transform -translate-x-1/2 z-10 text-center">
+      <motion.div
+        onClick={handleExploreClick}
+        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 z-10 text-center cursor-pointer select-none"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        whileHover={{ opacity: 1 }}
+        whileTap={{ scale: 0.95 }}
+      >
         {/* EXPLORE Text */}
-        <h2
-          className="text-2xl  font-bold uppercase tracking-widest text-white"
-          style={{
-            mixBlendMode: "overlay",
-            opacity: 0.8,
-          }}
+        <motion.h2
+          className="text-2xl font-bold uppercase tracking-widest text-white"
+          style={{ mixBlendMode: "overlay" }}
         >
           EXPLORE
-        </h2>
+        </motion.h2>
 
         {/* Arrow Icon */}
-        <div
-          className=" w-6 h-6 mx-auto flex items-center justify-center"
-          style={{
-            mixBlendMode: "overlay",
-            opacity: 0.8,
-          }}
+        <motion.div
+          className="w-6 h-6 mx-auto flex items-center justify-center"
+          style={{ mixBlendMode: "overlay" }}
+          initial={{ y: 0 }}
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
         >
           <img
             src="/imgi_142_button-play-icon.svg"
             alt="Arrow Down"
             className="w-8 h-8 rotate-90"
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

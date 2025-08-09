@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef } from "react";
+import { motion, useInView, useAnimation } from "framer-motion";
 import Marquee from "react-fast-marquee";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
@@ -25,8 +26,38 @@ export default function AwardsMarquee() {
     },
   ];
 
+  // ref للكومبوننت عشان نعرف لو داخل الشاشة
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const controls = useAnimation();
+
+  React.useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
+
+  // Variants للـ motion
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
   return (
-    <div className="bg-white text-black">
+    <div className="bg-white text-black" ref={ref}>
       {/* Top Marquee */}
       <Marquee
         speed={100}
@@ -57,48 +88,57 @@ export default function AwardsMarquee() {
       {/* Awards Section */}
       <div className="py-10 bg-black px-6">
         <div className="max-w-7xl mx-auto">
-          <Swiper
-            modules={[Autoplay]}
-            spaceBetween={50}
-            slidesPerView={1}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            breakpoints={{
-              640: {
-                slidesPerView: 2,
-                spaceBetween: 30,
-              },
-              768: {
-                slidesPerView: 3,
-                spaceBetween: 40,
-              },
-              1024: {
-                slidesPerView: 4,
-                spaceBetween: 50,
-              },
-              1280: {
-                slidesPerView: 5,
-                spaceBetween: 50,
-              },
-            }}
-            className="awards-swiper"
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={controls}
           >
-            {awards.map((award, index) => (
-              <SwiperSlide key={index}>
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="h-40 flex items-center justify-center">
-                    <img
-                      src={award.logo}
-                      alt={award.title}
-                      className="h-full w-auto object-contain"
-                    />
-                  </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+            <Swiper
+              modules={[Autoplay]}
+              spaceBetween={50}
+              slidesPerView={1}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 30,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 40,
+                },
+                1024: {
+                  slidesPerView: 4,
+                  spaceBetween: 50,
+                },
+                1280: {
+                  slidesPerView: 5,
+                  spaceBetween: 50,
+                },
+              }}
+              className="awards-swiper"
+            >
+              {awards.map((award, index) => (
+                <SwiperSlide key={index}>
+                  <motion.div
+                    variants={itemVariants}
+                    className="flex flex-col items-center text-center space-y-4"
+                  >
+                    <div className="h-40 flex items-center justify-center">
+                      <img
+                        src={award.logo}
+                        alt={`Award ${index + 1}`}
+                        className="h-full w-auto object-contain"
+                      />
+                    </div>
+                  </motion.div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </motion.div>
         </div>
       </div>
 

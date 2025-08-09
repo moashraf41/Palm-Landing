@@ -140,3 +140,7 @@
 .animate-rotate-left {
   animation: rotate-left 2s ease-in-out infinite;
 }
+::selection {
+  background-color: black;
+  color: white;
+}
