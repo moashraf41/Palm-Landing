@@ -10,7 +10,7 @@ import OFFERS from "./components/OFFERS";
 import PLAYTIME from "./components/PLAYTIME";
 import Rooms from "./components/Rooms";
 import Events from "./components/Events";
-import Footer from "./components/footer";
+import Footer from "./components/Footer";
 
 function App() {
   const scrollRef = useRef(null);
