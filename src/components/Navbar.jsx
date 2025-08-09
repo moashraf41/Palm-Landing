@@ -134,7 +134,7 @@ export default function Navbar() {
 
       {/* Full Screen Menu with Framer Motion */}
       <motion.div
-        className="fixed inset-0 bg-white z-60"
+        className="fixed inset-0 bg-white z-60 sm:pt-12 pt-10 md:pt-0 "
         initial={{ opacity: 0, x: -100 }}
         animate={{
           opacity: isOpen ? 1 : 0,
